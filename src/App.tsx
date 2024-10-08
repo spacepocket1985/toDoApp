@@ -1,16 +1,25 @@
 import { FC } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { deepPurple, purple } from '@mui/material/colors';
 
 import { Header } from './components/layout/Header';
-import { RegistrationForm } from './components/registrationForm/registrationForm';
+import { Main } from './pages/Main';
 
 import '@fontsource/roboto/400.css';
 
+const theme = createTheme({
+  palette: {
+    primary: deepPurple,
+    secondary: purple,
+  },
+});
+
 const App: FC = () => {
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Header />
-      <RegistrationForm />
-    </>
+      <Main />
+    </ThemeProvider>
   );
 };
 
