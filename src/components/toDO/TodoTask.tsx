@@ -19,7 +19,7 @@ export const TodoTask: React.FC<{
   };
 
   const onChangeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setNewTitle(e.currentTarget.value);
+    setNewTitle(e.currentTarget.value.trim());
   };
 
   return (
@@ -41,6 +41,7 @@ export const TodoTask: React.FC<{
             onClick={() => {
               setEditMode(false);
             }}
+            disabled={!newTitle.length}
           >
             Update
           </Button>
