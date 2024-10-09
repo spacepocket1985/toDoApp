@@ -14,19 +14,19 @@ export const Main: React.FC = () => {
   ]);
 
   const changeTaskStatus = (id: string) => {
-    setTasks(
-      tasks.map((task) =>
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
         task.id === id ? { ...task, isDone: !task.isDone } : task
       )
     );
   };
 
   const deleteTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
   const addTask = (title: string) => {
-    setTasks([...tasks, { id: v1(), title, isDone: false }]);
+    setTasks((prevTasks) => [...prevTasks, { id: v1(), title, isDone: false }]);
   };
 
   return (
