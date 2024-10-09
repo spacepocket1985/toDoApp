@@ -37,27 +37,25 @@ export const AddTodoForm: React.FC<{
   };
 
   return (
-    <>
-      <Grid container sx={{ textAlign: 'center', mb: 2 }} spacing={1}>
-        <TextField
-          value={newTaskTitle}
-          label="Todo text"
-          variant="outlined"
-          color="secondary"
-          size="small"
-          error={!!error}
-          helperText={error}
-          onChange={onChangeNewTaskTitleHandler}
-          onKeyDown={onKeyPressHandler}
-        />
-        <Button
-          variant="contained"
-          onClick={addNewTask}
-          disabled={!newTaskTitle.length}
-        >
-          Add task
-        </Button>
-      </Grid>
-    </>
+    <Grid container sx={{ textAlign: 'center', mb: 2 }} spacing={1}>
+      <TextField
+        value={newTaskTitle}
+        label="Todo text"
+        variant="outlined"
+        color="secondary"
+        size="small"
+        error={!!error}
+        helperText={error}
+        onChange={onChangeNewTaskTitleHandler}
+        onKeyDown={onKeyPressHandler}
+      />
+      <Button
+        variant="contained"
+        onClick={addNewTask}
+        disabled={!newTaskTitle.length}
+      >
+        Add task
+      </Button>
+    </Grid>
   );
 };
