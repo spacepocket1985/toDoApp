@@ -1,9 +1,13 @@
-import { Box, Button, CircularProgress, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Wrapper } from '../components/wrapper/Wrapper';
 import useHttp from '../hooks/useHttp';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../routes/routePaths';
+import { _LoginEndpoint } from '../service/toDoApi';
+import { Spinner } from '../components/spinner/Spinner';
+import { Snack } from '../components/snack/Snack';
+import { useAuth } from '../context/AuthContext';
 
 type SignInInputsType = {
   email: string;
@@ -16,12 +20,12 @@ export const SignIn: React.FC = () => {
   });
 
   const navigate = useNavigate();
+  const { updateToken } = useAuth();
 
-  const { fetchData, isLoading, isError } = useHttp();
-  const _ApiBase = 'https://todo-redev.herokuapp.com/api';
+  const { fetchData, isLoading, isError } = useHttp<{ token: string }>();
 
-  const onSubmit: SubmitHandler<SignInInputsType> = (data) => {
-    fetchData(`${_ApiBase}/auth/login`, {
+  const onSubmit: SubmitHandler<SignInInputsType> = async (data) => {
+    const token = await fetchData(_LoginEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -30,17 +34,16 @@ export const SignIn: React.FC = () => {
         email: data.email,
         password: data.password,
       }),
-    })
-      .then((data) => {
-        console.log(data);
-        navigate(RoutePaths.MainPage);
-      })
-      .catch((er) => console.log(er));
+    });
+    if (token) {
+      updateToken(token.token);
+      navigate(RoutePaths.MainPage);
+    }
   };
 
-  const spinner = isLoading ? <CircularProgress size="lg" /> : null;
+  const spinner = isLoading ? <Spinner /> : null;
   const content = !isLoading ? (
-    <Wrapper title={'Sign in please'}>
+    <>
       <Box
         component="form"
         sx={{
@@ -73,15 +76,18 @@ export const SignIn: React.FC = () => {
           Submit
         </Button>
       </Box>
-
-      {isError && <p>Error: {isError}</p>}
-    </Wrapper>
+    </>
   ) : null;
 
   return (
-    <>
+    <Wrapper title={'Sign in please'}>
       {spinner}
       {content}
-    </>
+      {isError && (
+        <Snack color="danger" variant="solid">
+          {isError}
+        </Snack>
+      )}
+    </Wrapper>
   );
 };

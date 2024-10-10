@@ -5,9 +5,11 @@ import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 
 import { RoutePaths } from '../../routes/routePaths';
+import { useAuth } from '../../context/AuthContext';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
+  const { authToken, removeAuthToken } = useAuth();
   return (
     <Box sx={{ flexGrow: 1, mb: 1 }}>
       <AppBar position="static">
@@ -31,10 +33,11 @@ export const Header: React.FC = () => {
             <Button
               color="inherit"
               onClick={() => {
-                navigate(RoutePaths.SignInPage);
+                if (!authToken) navigate(RoutePaths.SignInPage);
+                else removeAuthToken();
               }}
             >
-              Sign In
+              {!authToken ? 'Sign in' : 'Sign out'}
             </Button>
             <Button
               color="inherit"

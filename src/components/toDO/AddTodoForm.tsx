@@ -42,7 +42,6 @@ export const AddTodoForm: React.FC<{
         value={newTaskTitle}
         label="Todo text"
         variant="outlined"
-        color="secondary"
         size="small"
         error={!!error}
         helperText={error}
