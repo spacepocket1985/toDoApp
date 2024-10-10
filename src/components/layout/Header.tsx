@@ -1,4 +1,8 @@
-import { Button } from '@mui/material';
+import { IconButton } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
@@ -21,32 +25,50 @@ export const Header: React.FC = () => {
             padding: '5px',
           }}
         >
-          <Button
+          <IconButton
+            size={'small'}
             color="inherit"
             onClick={() => {
               navigate(RoutePaths.MainPage);
             }}
           >
-            ToDo List app
-          </Button>
+            <HomeIcon color="inherit" />
+            ToDo app
+          </IconButton>
           <Grid>
-            <Button
+            <IconButton
+              size="small"
               color="inherit"
               onClick={() => {
                 if (!authToken) navigate(RoutePaths.SignInPage);
                 else removeAuthToken();
               }}
             >
-              {!authToken ? 'Sign in' : 'Sign out'}
-            </Button>
-            <Button
+              {!authToken ? (
+                <>
+                  <LoginIcon sx={{ mr: 1 }} />
+                  {'sign in'}
+                </>
+              ) : (
+                <>
+                  <LogoutIcon sx={{ mr: 1 }} />
+                  {'sign out'}
+                </>
+              )}
+            </IconButton>
+            <IconButton
+              size="small"
               color="inherit"
               onClick={() => {
                 navigate(RoutePaths.SignUpPage);
               }}
             >
-              Sign Up
-            </Button>
+              {' '}
+              <>
+                <PersonAddIcon sx={{ mr: 1 }} />
+                {'sign Up'}
+              </>
+            </IconButton>
           </Grid>
         </Grid>
       </AppBar>
