@@ -1,17 +1,17 @@
 import { useCallback, useState } from 'react';
 
-type UseHttpType<T> = {
+type UseHttpType = {
   isLoading: boolean;
   isError: string | null;
-  fetchData: (url: string, options: RequestInit) => Promise<T | undefined>;
+  fetchData: <T>(url: string, options: RequestInit) => Promise<T | undefined>;
 };
 
-const useHttp = <T>(): UseHttpType<T> => {
+const useHttp = (): UseHttpType => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState<string | null>(null);
 
   const fetchData = useCallback(
-    async (url: string, options: RequestInit): Promise<T | undefined> => {
+    async <T>(url: string, options: RequestInit): Promise<T | undefined> => {
       setIsLoading(true);
       setIsError(null);
 
@@ -19,7 +19,7 @@ const useHttp = <T>(): UseHttpType<T> => {
         const response = await fetch(url, options);
         if (!response.ok) {
           throw new Error(
-            `We have error in fetch data.${response.statusText} Code status - ${response.status}`
+            `We have an error in fetching data. ${response.statusText} Code status - ${response.status}`
           );
         }
 

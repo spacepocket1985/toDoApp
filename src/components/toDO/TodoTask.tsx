@@ -3,13 +3,14 @@ import { IconButton, Typography, Button, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ChangeEvent, useState } from 'react';
-import { TaskType } from './TodoList';
+import { TodoItem } from '../../service/toDoApi';
 
 export const TodoTask: React.FC<{
-  task: TaskType;
-  changeTaskStatus: (id: string) => void;
-  deleteTask: (id: string) => void;
-}> = ({ task, changeTaskStatus, deleteTask }) => {
+  task: TodoItem;
+  changeTaskStatus: (id: number) => void;
+  updateTaskTitle: (id: number, newTitle: string) => void;
+  deleteTask: (id: number) => void;
+}> = ({ task, changeTaskStatus, deleteTask, updateTaskTitle }) => {
   const [editMode, setEditMode] = useState(false);
   const [newTitle, setNewTitle] = useState(task.title);
 
@@ -25,7 +26,11 @@ export const TodoTask: React.FC<{
   return (
     <Grid
       container
-      sx={{ alignItems: 'center', justifyContent: 'space-between' }}
+      sx={{
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: 'dotted 2px #2196f3',
+      }}
     >
       {editMode ? (
         <>
@@ -40,6 +45,7 @@ export const TodoTask: React.FC<{
             variant="contained"
             onClick={() => {
               setEditMode(false);
+              updateTaskTitle(task.id, newTitle);
             }}
             disabled={!newTitle.length}
           >
@@ -53,7 +59,7 @@ export const TodoTask: React.FC<{
             variant="h6"
             sx={{
               paddingLeft: '5px',
-              textDecoration: task.isDone ? 'line-through' : '',
+              textDecoration: task.isCompleted ? 'line-through' : '',
               cursor: 'pointer',
             }}
             onClick={() => {

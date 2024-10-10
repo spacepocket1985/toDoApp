@@ -1,17 +1,13 @@
 import { Paper } from '@mui/material';
 import { TodoTask } from './TodoTask';
-
-export type TaskType = {
-  id: string;
-  title: string;
-  isDone: boolean;
-};
+import { TodoItem } from '../../service/toDoApi';
 
 export const TodoList: React.FC<{
-  tasks: TaskType[];
-  changeTaskStatus: (id: string) => void;
-  deleteTask: (id: string) => void;
-}> = ({ tasks, changeTaskStatus, deleteTask }) => {
+  tasks: TodoItem[];
+  changeTaskStatus: (id: number) => void;
+  deleteTask: (id: number) => void;
+  updateTaskTitle: (id: number, newTitle: string) => void;
+}> = ({ tasks, changeTaskStatus, deleteTask, updateTaskTitle }) => {
   const rednderTasks = tasks.map((task) => {
     return (
       <TodoTask
@@ -19,6 +15,7 @@ export const TodoList: React.FC<{
         key={task.id}
         changeTaskStatus={changeTaskStatus}
         deleteTask={deleteTask}
+        updateTaskTitle={updateTaskTitle}
       />
     );
   });

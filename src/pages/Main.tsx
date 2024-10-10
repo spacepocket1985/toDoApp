@@ -1,46 +1,105 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { v1 } from 'uuid';
-
 import { AddTodoForm } from '../components/toDO/AddTodoForm';
-import { TaskType, TodoList } from '../components/toDO/TodoList';
+import { TodoList } from '../components/toDO/TodoList';
 
 import { Wrapper } from '../components/wrapper/Wrapper';
 import { RoutePaths } from '../routes/routePaths';
 import { Spinner } from '../components/spinner/Spinner';
 import { useAuth } from '../context/AuthContext';
+import useHttp from '../hooks/useHttp';
+import { _ToDoEndpoint, TodoItem } from '../service/toDoApi';
+import { Snack } from '../components/snack/Snack';
 
 export const Main: React.FC = () => {
   const navigate = useNavigate();
   const { authToken } = useAuth();
+  const { fetchData, isError } = useHttp();
 
   useEffect(() => {
-    if (authToken === null) navigate(RoutePaths.SignInPage);
-    else setIsloading(false);
-  }, [authToken, navigate]);
-  const [tasks, setTasks] = useState<TaskType[]>([
-    { id: v1(), title: 'Walking the dog 🐶', isDone: true },
-    { id: v1(), title: 'Clean house 🏠', isDone: true },
-    { id: v1(), title: 'Call parents ☎️', isDone: false },
-  ]);
+    const getToDoList = async () => {
+      if (authToken === null) navigate(RoutePaths.SignInPage);
+      else {
+        const tasks = await fetchData<TodoItem[]>(_ToDoEndpoint, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+        if (tasks) setTasks(tasks);
+
+        setIsloading(false);
+      }
+    };
+    getToDoList();
+  }, [authToken, fetchData, navigate]);
+  const [tasks, setTasks] = useState<TodoItem[]>([]);
 
   const [isLoading, setIsloading] = useState(true);
 
-  const changeTaskStatus = (id: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, isDone: !task.isDone } : task
-      )
+  const changeTaskStatus = async (id: number) => {
+    const updatedTask = await fetchData<TodoItem>(
+      `${_ToDoEndpoint}/${id}/isCompleted`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
     );
+    if (updatedTask)
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
+        )
+      );
   };
 
-  const deleteTask = (id: string) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  const updateTaskTitle = async (id: number, newTitle: string) => {
+    const updatedTask = await fetchData<TodoItem>(`${_ToDoEndpoint}/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+
+      body: JSON.stringify({
+        title: newTitle,
+      }),
+    });
+    if (updatedTask)
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, title: newTitle } : task
+        )
+      );
   };
 
-  const addTask = (title: string) => {
-    setTasks((prevTasks) => [...prevTasks, { id: v1(), title, isDone: false }]);
+  const deleteTask = async (id: number) => {
+    const updatedTask = await fetchData<TodoItem>(`${_ToDoEndpoint}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    if (updatedTask)
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
+
+  const addTask = async (title: string) => {
+    const newTask = await fetchData<TodoItem>(_ToDoEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({
+        title,
+      }),
+    });
+    if (newTask) setTasks((prevTasks) => [newTask, ...prevTasks]);
   };
 
   const spinner = isLoading ? <Spinner /> : null;
@@ -50,6 +109,7 @@ export const Main: React.FC = () => {
       <TodoList
         tasks={tasks}
         changeTaskStatus={changeTaskStatus}
+        updateTaskTitle={updateTaskTitle}
         deleteTask={deleteTask}
       />
     </>
@@ -59,6 +119,11 @@ export const Main: React.FC = () => {
     <Wrapper title={'Get things done!'}>
       {spinner}
       {content}
+      {isError && (
+        <Snack color="danger" variant="solid">
+          {isError}
+        </Snack>
+      )}
     </Wrapper>
   );
 };

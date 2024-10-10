@@ -22,7 +22,14 @@ export const Wrapper: React.FC<{
       <Typography
         variant="h4"
         component="h4"
-        sx={{ padding: 1, textAlign: 'center' }}
+        sx={{
+          padding: 1,
+          textAlign: 'center',
+          bgcolor: '#1976d2',
+          borderRadius: 2,
+          color: '#fff',
+          width: '20rem',
+        }}
       >
         {title}
       </Typography>

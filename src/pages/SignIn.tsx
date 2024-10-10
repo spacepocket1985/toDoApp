@@ -1,8 +1,8 @@
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Wrapper } from '../components/wrapper/Wrapper';
 import useHttp from '../hooks/useHttp';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../routes/routePaths';
 import { _LoginEndpoint } from '../service/toDoApi';
 import { Spinner } from '../components/spinner/Spinner';
@@ -22,10 +22,10 @@ export const SignIn: React.FC = () => {
   const navigate = useNavigate();
   const { updateToken } = useAuth();
 
-  const { fetchData, isLoading, isError } = useHttp<{ token: string }>();
+  const { fetchData, isLoading, isError } = useHttp();
 
   const onSubmit: SubmitHandler<SignInInputsType> = async (data) => {
-    const token = await fetchData(_LoginEndpoint, {
+    const token = await fetchData<{ token: string }>(_LoginEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export const SignIn: React.FC = () => {
       <Box
         component="form"
         sx={{
-          '& .MuiTextField-root': { width: '35ch' },
+          '& .MuiTextField-root': { width: '20rem' },
           display: 'flex',
           justifyContent: 'center',
           alignContent: 'center',
@@ -75,6 +75,10 @@ export const SignIn: React.FC = () => {
         <Button type="submit" variant="contained">
           Submit
         </Button>
+        <Typography sx={{ textAlign: 'center' }}>
+          Dont have an account? <Link to={RoutePaths.SignUpPage}>Register</Link>
+          .
+        </Typography>
       </Box>
     </>
   ) : null;
