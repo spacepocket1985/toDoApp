@@ -3,11 +3,13 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { Wrapper } from '../components/wrapper/Wrapper';
 import useHttp from '../hooks/useHttp';
 import { Link, useNavigate } from 'react-router-dom';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { RoutePaths } from '../routes/routePaths';
 import { _LoginEndpoint } from '../service/toDoApi';
 import { Spinner } from '../components/spinner/Spinner';
 import { Snack } from '../components/snack/Snack';
 import { useAuth } from '../context/AuthContext';
+import { validationSchemaSignIn } from '../utils/validationSchema';
 
 type SignInInputsType = {
   email: string;
@@ -15,7 +17,12 @@ type SignInInputsType = {
 };
 
 export const SignIn: React.FC = () => {
-  const { handleSubmit, register } = useForm<SignInInputsType>({
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isValid },
+  } = useForm<SignInInputsType>({
+    resolver: yupResolver(validationSchemaSignIn),
     mode: 'onChange',
   });
 
@@ -43,44 +50,43 @@ export const SignIn: React.FC = () => {
 
   const spinner = isLoading ? <Spinner /> : null;
   const content = !isLoading ? (
-    <>
-      <Box
-        component="form"
-        sx={{
-          '& .MuiTextField-root': { width: '20rem' },
-          display: 'flex',
-          justifyContent: 'center',
-          alignContent: 'center',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <TextField
-          label="Email"
-          type="email"
-          autoComplete=""
-          size="small"
-          required
-          {...register('email')}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          autoComplete="current-password"
-          size="small"
-          {...register('password')}
-          required
-        />
-        <Button type="submit" variant="contained">
-          Submit
-        </Button>
-        <Typography sx={{ textAlign: 'center' }}>
-          Dont have an account? <Link to={RoutePaths.SignUpPage}>Register</Link>
-          .
-        </Typography>
-      </Box>
-    </>
+    <Box
+      component="form"
+      sx={{
+        '& .MuiTextField-root': { width: '20rem' },
+        display: 'flex',
+        justifyContent: 'center',
+        alignContent: 'center',
+        flexDirection: 'column',
+        gap: 2,
+      }}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <TextField
+        label="Email"
+        type="email"
+        autoComplete=""
+        size="small"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        {...register('email')}
+      />
+      <TextField
+        label="Password"
+        type="password"
+        autoComplete="current-password"
+        size="small"
+        {...register('password')}
+        error={!!errors.password}
+        helperText={errors.password?.message}
+      />
+      <Button type="submit" variant="contained" disabled={!isValid}>
+        Submit
+      </Button>
+      <Typography sx={{ textAlign: 'center' }}>
+        Dont have an account? <Link to={RoutePaths.SignUpPage}>Register.</Link>
+      </Typography>
+    </Box>
   ) : null;
 
   return (

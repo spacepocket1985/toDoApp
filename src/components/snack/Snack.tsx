@@ -17,6 +17,7 @@ export const Snack: React.FC<{
     <Stack spacing={2} sx={{ alignItems: 'center' }}>
       <Snackbar
         autoHideDuration={4000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={open}
         variant={variant}
         color={color}

@@ -27,16 +27,14 @@ export const Main: React.FC = () => {
             Authorization: `Bearer ${authToken}`,
           },
         });
+        setIsLoading(false);
         if (tasks) setTasks(tasks);
-
-        setIsloading(false);
       }
     };
     getToDoList();
   }, [authToken, fetchData, navigate]);
   const [tasks, setTasks] = useState<TodoItem[]>([]);
-
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const changeTaskStatus = async (id: number) => {
     const updatedTask = await fetchData<TodoItem>(
