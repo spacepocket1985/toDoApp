@@ -14,6 +14,30 @@ import { useAuth } from '../../context/AuthContext';
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const { authToken, removeAuthToken } = useAuth();
+
+  const renderAuthButton = () => (
+    <IconButton
+      size="small"
+      color="inherit"
+      onClick={() => {
+        if (!authToken) navigate(RoutePaths.SignInPage);
+        else removeAuthToken();
+      }}
+    >
+      {!authToken ? (
+        <>
+          <LoginIcon sx={{ mr: 1 }} />
+          {'sign in'}
+        </>
+      ) : (
+        <>
+          <LogoutIcon sx={{ mr: 1 }} />
+          {'sign out'}
+        </>
+      )}
+    </IconButton>
+  );
+
   return (
     <Box sx={{ flexGrow: 1, mb: 1 }}>
       <AppBar position="static">
@@ -36,26 +60,7 @@ export const Header: React.FC = () => {
             ToDo app
           </IconButton>
           <Grid>
-            <IconButton
-              size="small"
-              color="inherit"
-              onClick={() => {
-                if (!authToken) navigate(RoutePaths.SignInPage);
-                else removeAuthToken();
-              }}
-            >
-              {!authToken ? (
-                <>
-                  <LoginIcon sx={{ mr: 1 }} />
-                  {'sign in'}
-                </>
-              ) : (
-                <>
-                  <LogoutIcon sx={{ mr: 1 }} />
-                  {'sign out'}
-                </>
-              )}
-            </IconButton>
+            {renderAuthButton()}
             <IconButton
               size="small"
               color="inherit"
@@ -63,7 +68,6 @@ export const Header: React.FC = () => {
                 navigate(RoutePaths.SignUpPage);
               }}
             >
-              {' '}
               <>
                 <PersonAddIcon sx={{ mr: 1 }} />
                 {'sign Up'}
