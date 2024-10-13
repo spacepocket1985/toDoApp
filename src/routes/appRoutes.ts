@@ -3,12 +3,14 @@ import { SignUp } from '../pages/SignUp';
 import { Main } from '../pages/Main';
 import { RoutePaths } from './routePaths';
 
-export const AppRoutes = [
+export const privateRoutes = [
   {
     path: RoutePaths.MainPage,
     Page: Main,
   },
+];
 
+export const publicRoutes = [
   {
     path: RoutePaths.SignInPage,
     Page: SignIn,

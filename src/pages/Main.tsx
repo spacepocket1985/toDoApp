@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AddTodoForm } from '../components/toDO/AddTodoForm';
 import { TodoList } from '../components/toDO/TodoList';
-
 import { Wrapper } from '../components/wrapper/Wrapper';
-import { RoutePaths } from '../routes/routePaths';
 import { Spinner } from '../components/spinner/Spinner';
 import { useAuth } from '../context/AuthContext';
 import useHttp from '../hooks/useHttp';
@@ -19,17 +17,14 @@ export const Main: React.FC = () => {
 
   useEffect(() => {
     const getToDoList = async () => {
-      if (authToken === null) navigate(RoutePaths.SignInPage);
-      else {
-        const tasks = await fetchData<TodoItem[]>(_ToDoEndpoint, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
-        setIsLoading(false);
-        if (tasks) setTasks(tasks);
-      }
+      const tasks = await fetchData<TodoItem[]>(_ToDoEndpoint, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setIsLoading(false);
+      if (tasks) setTasks(tasks);
     };
     getToDoList();
   }, [authToken, fetchData, navigate]);
