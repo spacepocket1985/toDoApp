@@ -100,8 +100,7 @@ export const Main: React.FC = () => {
     if (newTask) setTasks((prevTasks) => [newTask, ...prevTasks]);
   };
 
-  const spinner = isLoading ? <Spinner /> : null;
-  const content = !isLoading ? (
+  const contentOrSpinner = !isLoading ? (
     <>
       <AddTodoForm addTask={addTask} />
       <TodoList
@@ -111,12 +110,13 @@ export const Main: React.FC = () => {
         deleteTask={deleteTask}
       />
     </>
-  ) : null;
+  ) : (
+    <Spinner />
+  );
 
   return (
     <Wrapper title={'Get things done!'}>
-      {spinner}
-      {content}
+      {contentOrSpinner}
       {isError && (
         <Snack color="danger" variant="solid">
           {isError}
