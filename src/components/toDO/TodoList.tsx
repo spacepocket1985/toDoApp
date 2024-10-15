@@ -1,23 +1,12 @@
 import { Paper } from '@mui/material';
 import { TodoTask } from './TodoTask';
-import { TodoItem } from '../../service/toDoApi';
+import { useAppSelector } from '../../hooks/storeHooks';
 
-export const TodoList: React.FC<{
-  tasks: TodoItem[];
-  changeTaskStatus: (id: number) => void;
-  deleteTask: (id: number) => void;
-  updateTaskTitle: (id: number, newTitle: string) => void;
-}> = ({ tasks, changeTaskStatus, deleteTask, updateTaskTitle }) => {
+export const TodoList: React.FC = () => {
+  const tasks = useAppSelector((state) => state.tasks);
+
   const rednderTasks = tasks.map((task) => {
-    return (
-      <TodoTask
-        task={task}
-        key={task.id}
-        changeTaskStatus={changeTaskStatus}
-        deleteTask={deleteTask}
-        updateTaskTitle={updateTaskTitle}
-      />
-    );
+    return <TodoTask task={task} key={task.id} />;
   });
 
   return <Paper>{rednderTasks}</Paper>;

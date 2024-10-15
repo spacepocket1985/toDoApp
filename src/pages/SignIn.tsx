@@ -20,7 +20,7 @@ export const SignIn: React.FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors},
+    formState: { errors },
   } = useForm<SignInInputsType>({
     resolver: yupResolver(validationSchemaSignIn),
     mode: 'onChange',
@@ -41,10 +41,10 @@ export const SignIn: React.FC = () => {
         password: data.password,
       }),
     });
-     if (token) {
+    if (token) {
       //  updateToken(token.token);
-       navigate(RoutePaths.MainPage);
-     }
+      navigate(RoutePaths.MainPage);
+    }
   };
 
   const spinner = isLoading ? <Spinner /> : null;

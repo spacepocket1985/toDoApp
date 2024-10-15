@@ -9,11 +9,10 @@ import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 
 import { RoutePaths } from '../../routes/routePaths';
-import { useAuth } from '../../context/AuthContext';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const { authToken, removeAuthToken } = useAuth();
+  const authToken = false;
 
   const renderAuthButton = () => (
     <IconButton
@@ -21,7 +20,6 @@ export const Header: React.FC = () => {
       color="inherit"
       onClick={() => {
         if (!authToken) navigate(RoutePaths.SignInPage);
-        else removeAuthToken();
       }}
     >
       {!authToken ? (

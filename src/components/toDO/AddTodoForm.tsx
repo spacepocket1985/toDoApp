@@ -1,10 +1,10 @@
 import { Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useState } from 'react';
+import { addTaskAC } from '../../store/tasksReducer';
+import { useAppDispatch } from '../../hooks/storeHooks';
 
-export const AddTodoForm: React.FC<{
-  addTask: (title: string) => void;
-}> = ({ addTask }) => {
+export const AddTodoForm: React.FC = () => {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [error, setError] = useState<null | string>(null);
 
@@ -26,12 +26,14 @@ export const AddTodoForm: React.FC<{
     }
   };
 
+  const dispatch = useAppDispatch();
+
   const addNewTask = (): void => {
     if (newTaskTitle.trim().length === 0) {
       setError('Title is required');
       return;
     }
-    addTask(newTaskTitle);
+    dispatch(addTaskAC(newTaskTitle));
     setError(null);
     setNewTaskTitle('');
   };
