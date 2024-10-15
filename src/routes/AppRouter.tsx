@@ -1,28 +1,22 @@
-import { Route, Routes, Navigate } from 'react-router-dom';  
-import { privateRoutes, publicRoutes } from './appRoutes';  
-import { useAuth } from '../context/AuthContext';  
-import { RoutePaths } from './routePaths';  
+import { Route, Routes } from 'react-router-dom';
+import { privateRoutes, publicRoutes } from './appRoutes';
 
-export const AppRouter = (): JSX.Element => {  
-  const { authToken } = useAuth();  
+import PrivateRoute from '../components/hoc/PrivateRoute';
 
-  return (  
-    <Routes>  
-      {authToken ? (  
-        [...privateRoutes, ...publicRoutes].map(({ path, Page }) => (  
-          <Route key={path} path={path} element={<Page />} />  
-        ))  
-      ) : (  
-        <>  
-          {publicRoutes.map(({ path, Page }) => (  
-            <Route key={path} path={path} element={<Page />} />  
-          ))}  
-          <Route  
-            path={RoutePaths.MainPage}  
-            element={<Navigate replace to={RoutePaths.SignInPage} />}  
-          />  
-        </>  
-      )}  
-    </Routes>  
-  );  
+export const AppRouter = (): JSX.Element => {
+  return (
+    <Routes>
+      {privateRoutes.map(({ path, Page }) => (
+        <Route
+          key={path}
+          path={path}
+          element={<PrivateRoute element={<Page />} />}
+        />
+      ))}
+
+      {publicRoutes.map(({ path, Page }) => (
+        <Route key={path} path={path} element={<Page />} />
+      ))}
+    </Routes>
+  );
 };
