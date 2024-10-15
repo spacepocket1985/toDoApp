@@ -5,6 +5,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ChangeEvent, useState } from 'react';
 import { TodoItem } from '../../service/toDoApi';
 
+export type TaskType = {
+  id: string;
+  title: string;
+  isCompleted: boolean;
+};
+
 export const TodoTask: React.FC<{
   task: TodoItem;
   changeTaskStatus: (id: number) => void;
