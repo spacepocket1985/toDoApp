@@ -25,7 +25,7 @@ export const RegistrationForm: React.FC = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormInputsType>({
     resolver: yupResolver(validationSchemaSignUp),
     mode: 'onChange',
@@ -144,7 +144,7 @@ export const RegistrationForm: React.FC = () => {
         size="small"
       />
 
-      <Button type="submit" variant="contained" disabled={!isValid}>
+      <Button type="submit" variant="contained" disabled>
         Submit
       </Button>
     </Box>

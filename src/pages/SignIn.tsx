@@ -8,7 +8,7 @@ import { RoutePaths } from '../routes/routePaths';
 import { _LoginEndpoint } from '../service/toDoApi';
 import { Spinner } from '../components/spinner/Spinner';
 import { Snack } from '../components/snack/Snack';
-import { useAuth } from '../context/AuthContext';
+
 import { validationSchemaSignIn } from '../utils/validationSchema';
 
 type SignInInputsType = {
@@ -20,14 +20,13 @@ export const SignIn: React.FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<SignInInputsType>({
     resolver: yupResolver(validationSchemaSignIn),
     mode: 'onChange',
   });
 
   const navigate = useNavigate();
-  const { updateToken } = useAuth();
 
   const { fetchData, isLoading, isError } = useHttp();
 
@@ -43,7 +42,7 @@ export const SignIn: React.FC = () => {
       }),
     });
     if (token) {
-      updateToken(token.token);
+      //  updateToken(token.token);
       navigate(RoutePaths.MainPage);
     }
   };
@@ -80,7 +79,7 @@ export const SignIn: React.FC = () => {
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-      <Button type="submit" variant="contained" disabled={!isValid}>
+      <Button type="submit" variant="contained" disabled>
         Submit
       </Button>
       <Typography sx={{ textAlign: 'center' }}>

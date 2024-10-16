@@ -3,14 +3,22 @@ import { IconButton, Typography, Button, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ChangeEvent, useState } from 'react';
-import { TodoItem } from '../../service/toDoApi';
+import { useAppDispatch } from '../../hooks/storeHooks';
+import {
+  changeTaskStatusAC,
+  changeTaskTitleAC,
+  removeTaskAC,
+} from '../../store/tasksReducer';
+
+export type TaskType = {
+  id: string;
+  title: string;
+  isCompleted: boolean;
+};
 
 export const TodoTask: React.FC<{
-  task: TodoItem;
-  changeTaskStatus: (id: number) => void;
-  updateTaskTitle: (id: number, newTitle: string) => void;
-  deleteTask: (id: number) => void;
-}> = ({ task, changeTaskStatus, deleteTask, updateTaskTitle }) => {
+  task: TaskType;
+}> = ({ task }) => {
   const [editMode, setEditMode] = useState(false);
   const [newTitle, setNewTitle] = useState(task.title);
 
@@ -21,6 +29,20 @@ export const TodoTask: React.FC<{
 
   const onChangeTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setNewTitle(e.currentTarget.value.trim());
+  };
+
+  const dispatch = useAppDispatch();
+
+  const updateTaskTitle = (taskId: string, newTitle: string) => {
+    dispatch(changeTaskTitleAC(taskId, newTitle));
+  };
+
+  const changeTaskStatus = (taskId: string) => {
+    dispatch(changeTaskStatusAC(taskId));
+  };
+
+  const deleteTask = (taskId: string) => {
+    dispatch(removeTaskAC(taskId));
   };
 
   return (

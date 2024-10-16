@@ -10,10 +10,11 @@ import { AuthProvider } from './context/AuthContext';
 const App: FC = () => {
   return (
     <Router>
-      <AuthProvider>
+
+      <Header />
+      <AppRouter />
         <Header />
         <AppRouter />
-      </AuthProvider>
     </Router>
   );
 };
