@@ -1,11 +1,11 @@
-import { legacy_createStore as createStore, combineReducers } from 'redux';
-import { tasksReducer } from './tasksReducer';
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import tasksReducer from './slices/tasksSlice';
 
 const rootReducer = combineReducers({
-  tasks: tasksReducer,
+  toDoList: tasksReducer,
 });
 
-export const store = createStore(rootReducer);
+export const store = configureStore({ reducer: rootReducer });
 
 export type AppRootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

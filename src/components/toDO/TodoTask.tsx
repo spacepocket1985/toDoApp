@@ -5,10 +5,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ChangeEvent, useState } from 'react';
 import { useAppDispatch } from '../../hooks/storeHooks';
 import {
-  changeTaskStatusAC,
-  changeTaskTitleAC,
-  removeTaskAC,
-} from '../../store/tasksReducer';
+  changeTaskTitle,
+  removeTask,
+  changeTaskStatus,
+} from '../../store/slices/tasksSlice';
 
 export type TaskType = {
   id: string;
@@ -33,16 +33,16 @@ export const TodoTask: React.FC<{
 
   const dispatch = useAppDispatch();
 
-  const updateTaskTitle = (taskId: string, newTitle: string) => {
-    dispatch(changeTaskTitleAC(taskId, newTitle));
+  const updateTaskTitle = (taskId: string, taskTitle: string) => {
+    dispatch(changeTaskTitle({ taskId, taskTitle }));
   };
 
-  const changeTaskStatus = (taskId: string) => {
-    dispatch(changeTaskStatusAC(taskId));
+  const updateTaskStatus = (taskId: string) => {
+    dispatch(changeTaskStatus(taskId));
   };
 
   const deleteTask = (taskId: string) => {
-    dispatch(removeTaskAC(taskId));
+    dispatch(removeTask(taskId));
   };
 
   return (
@@ -85,7 +85,7 @@ export const TodoTask: React.FC<{
               cursor: 'pointer',
             }}
             onClick={() => {
-              changeTaskStatus(task.id);
+              updateTaskStatus(task.id);
             }}
           >
             {newTitle}
