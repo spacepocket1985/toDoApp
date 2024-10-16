@@ -11,7 +11,7 @@ export const AddTodoForm: React.FC<{
   const onChangeNewTaskTitleHandler = (
     event: React.ChangeEvent<HTMLInputElement>
   ): void => {
-    const newTaskTitle = event.target.value.trim();
+    const newTaskTitle = event.target.value;
     setNewTaskTitle(newTaskTitle);
     setError(null);
   };
@@ -27,7 +27,7 @@ export const AddTodoForm: React.FC<{
   };
 
   const addNewTask = (): void => {
-    if (newTaskTitle.length === 0) {
+    if (newTaskTitle.trim().length === 0) {
       setError('Title is required');
       return;
     }
@@ -42,7 +42,6 @@ export const AddTodoForm: React.FC<{
         value={newTaskTitle}
         label="Todo text"
         variant="outlined"
-        color="secondary"
         size="small"
         error={!!error}
         helperText={error}

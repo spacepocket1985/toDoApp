@@ -1,59 +1,122 @@
-import { useState } from 'react';
-import { Typography } from '@mui/material';
-import { v1 } from 'uuid';
-import Grid from '@mui/material/Grid2';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { AddTodoForm } from '../components/toDO/AddTodoForm';
-import { TaskType, TodoList } from '../components/toDO/TodoList';
+import { TodoList } from '../components/toDO/TodoList';
+import { Wrapper } from '../components/wrapper/Wrapper';
+import { Spinner } from '../components/spinner/Spinner';
+import { useAuth } from '../context/AuthContext';
+import useHttp from '../hooks/useHttp';
+import { _ToDoEndpoint, TodoItem } from '../service/toDoApi';
+import { Snack } from '../components/snack/Snack';
 
 export const Main: React.FC = () => {
-  const [tasks, setTasks] = useState<TaskType[]>([
-    { id: v1(), title: 'Walking the dog 🐶', isDone: true },
-    { id: v1(), title: 'Clean house 🏠', isDone: true },
-    { id: v1(), title: 'Call parents ☎️', isDone: false },
-  ]);
+  const navigate = useNavigate();
+  const { authToken } = useAuth();
+  const { fetchData, isError } = useHttp();
 
-  const changeTaskStatus = (id: string) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === id ? { ...task, isDone: !task.isDone } : task
-      )
+  useEffect(() => {
+    const getToDoList = async () => {
+      const tasks = await fetchData<TodoItem[]>(_ToDoEndpoint, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      setIsLoading(false);
+      if (tasks) setTasks(tasks);
+    };
+    getToDoList();
+  }, [authToken, fetchData, navigate]);
+  const [tasks, setTasks] = useState<TodoItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const changeTaskStatus = async (id: number) => {
+    const updatedTask = await fetchData<TodoItem>(
+      `${_ToDoEndpoint}/${id}/isCompleted`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
     );
+    if (updatedTask)
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, isCompleted: !task.isCompleted } : task
+        )
+      );
   };
 
-  const deleteTask = (id: string) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  const updateTaskTitle = async (id: number, newTitle: string) => {
+    const updatedTask = await fetchData<TodoItem>(`${_ToDoEndpoint}/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+
+      body: JSON.stringify({
+        title: newTitle,
+      }),
+    });
+    if (updatedTask)
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, title: newTitle } : task
+        )
+      );
   };
 
-  const addTask = (title: string) => {
-    setTasks((prevTasks) => [...prevTasks, { id: v1(), title, isDone: false }]);
+  const deleteTask = async (id: number) => {
+    const updatedTask = await fetchData<TodoItem>(`${_ToDoEndpoint}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    if (updatedTask)
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
+
+  const addTask = async (title: string) => {
+    const newTask = await fetchData<TodoItem>(_ToDoEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({
+        title,
+      }),
+    });
+    if (newTask) setTasks((prevTasks) => [newTask, ...prevTasks]);
+  };
+
+  const contentOrSpinner = !isLoading ? (
+    <>
+      <AddTodoForm addTask={addTask} />
+      <TodoList
+        tasks={tasks}
+        changeTaskStatus={changeTaskStatus}
+        updateTaskTitle={updateTaskTitle}
+        deleteTask={deleteTask}
+      />
+    </>
+  ) : (
+    <Spinner />
+  );
 
   return (
-    <Grid
-      container
-      direction={'column'}
-      spacing={2}
-      size={3}
-      sx={{
-        m: 'auto',
-        justifyContent: 'center',
-        alignContent: 'center',
-        borderRadius: 2,
-        padding: 1,
-      }}
-    >
-      <Grid>
-        <Typography variant="h4" component="h4" sx={{ padding: 1 }}>
-          Get things done!
-        </Typography>
-        <AddTodoForm addTask={addTask} />
-        <TodoList
-          tasks={tasks}
-          changeTaskStatus={changeTaskStatus}
-          deleteTask={deleteTask}
-        />
-      </Grid>
-    </Grid>
+    <Wrapper title={'Get things done!'}>
+      {contentOrSpinner}
+      {isError && (
+        <Snack color="danger" variant="solid">
+          {isError}
+        </Snack>
+      )}
+    </Wrapper>
   );
 };

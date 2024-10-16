@@ -1,25 +1,20 @@
 import { FC } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { deepPurple, purple } from '@mui/material/colors';
+import { BrowserRouter as Router } from 'react-router-dom';
 
+import { AppRouter } from './routes/AppRouter';
 import { Header } from './components/layout/Header';
 
 import '@fontsource/roboto/400.css';
-import { Main } from './pages/Main';
-
-const theme = createTheme({
-  palette: {
-    primary: deepPurple,
-    secondary: purple,
-  },
-});
+import { AuthProvider } from './context/AuthContext';
 
 const App: FC = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <Header />
-      <Main />
-    </ThemeProvider>
+    <Router>
+      <AuthProvider>
+        <Header />
+        <AppRouter />
+      </AuthProvider>
+    </Router>
   );
 };
 
