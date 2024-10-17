@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { RoutePaths } from '../routes/routePaths';
 import { RegistrationForm } from '../components/registrationForm/registrationForm';
 
-export const SignUp: React.FC = () => {
+const SignUp: React.FC = () => {
   return (
     <Wrapper title={'Sign up please'}>
       <RegistrationForm />
@@ -14,3 +14,5 @@ export const SignUp: React.FC = () => {
     </Wrapper>
   );
 };
+
+export default SignUp;
