@@ -16,7 +16,7 @@ type SignInInputsType = {
   password: string;
 };
 
-export const SignIn: React.FC = () => {
+const SignIn: React.FC = () => {
   const {
     handleSubmit,
     register,
@@ -100,3 +100,5 @@ export const SignIn: React.FC = () => {
     </Wrapper>
   );
 };
+
+export default SignIn;

@@ -1,7 +1,10 @@
-import { SignIn } from '../pages/SignIn';
-import { SignUp } from '../pages/SignUp';
-import { Main } from '../pages/Main';
+
+import React from 'react';
 import { RoutePaths } from './routePaths';
+
+const SignIn = React.lazy(() => import('../pages/SignIn'));  
+const SignUp = React.lazy(() => import('../pages/SignUp'));  
+const Main = React.lazy(() => import('../pages/Main'));  
 
 export const privateRoutes = [
   {
