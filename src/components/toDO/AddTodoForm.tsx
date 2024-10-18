@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/storeHooks';
 import { addTask } from '../../store/slices/tasksSlice';
 
+
 export const AddTodoForm: React.FC = () => {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [error, setError] = useState<null | string>(null);
@@ -34,7 +35,7 @@ export const AddTodoForm: React.FC = () => {
       setError('Title is required');
       return;
     }
-    dispatch(addTask(newTaskTitle));
+     dispatch(addTask(newTaskTitle));
     setError(null);
     setNewTaskTitle('');
   };

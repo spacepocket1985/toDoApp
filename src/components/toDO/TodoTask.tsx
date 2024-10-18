@@ -1,23 +1,18 @@
+ 
 import Grid from '@mui/material/Grid2';
 import { IconButton, Typography, Button, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ChangeEvent, useState } from 'react';
-import { useAppDispatch } from '../../hooks/storeHooks';
-import {
-  changeTaskTitle,
-  removeTask,
-  changeTaskStatus,
-} from '../../store/slices/tasksSlice';
 
-export type TaskType = {
-  id: string;
-  title: string;
-  isCompleted: boolean;
-};
+
+import { TodoItem } from '../../service/toDoApi';
+
+
+
 
 export const TodoTask: React.FC<{
-  task: TaskType;
+  task: TodoItem;
 }> = ({ task }) => {
   const [editMode, setEditMode] = useState(false);
   const [newTitle, setNewTitle] = useState(task.title);
@@ -31,19 +26,18 @@ export const TodoTask: React.FC<{
     setNewTitle(e.currentTarget.value.trim());
   };
 
-  const dispatch = useAppDispatch();
 
-  const updateTaskTitle = (taskId: string, taskTitle: string) => {
-    dispatch(changeTaskTitle({ taskId, taskTitle }));
-  };
+  // const updateTaskTitle = (taskId: number, taskTitle: string) => {
+    
+  // };
 
-  const updateTaskStatus = (taskId: string) => {
-    dispatch(changeTaskStatus(taskId));
-  };
+  // const updateTaskStatus = (taskId: number) => {
+  //   dispatch(changeTaskStatus(taskId))
+  // };
 
-  const deleteTask = (taskId: string) => {
-    dispatch(removeTask(taskId));
-  };
+  // const deleteTask = (taskId: number) => {
+    
+  // };
 
   return (
     <Grid
@@ -67,7 +61,7 @@ export const TodoTask: React.FC<{
             variant="contained"
             onClick={() => {
               setEditMode(false);
-              updateTaskTitle(task.id, newTitle);
+              //updateTaskTitle(task.id, newTitle);
             }}
             disabled={!newTitle.length}
           >
@@ -85,7 +79,8 @@ export const TodoTask: React.FC<{
               cursor: 'pointer',
             }}
             onClick={() => {
-              updateTaskStatus(task.id);
+              // updateTaskStatus(task.id);
+              console.log('2')
             }}
           >
             {newTitle}
@@ -94,7 +89,10 @@ export const TodoTask: React.FC<{
             <IconButton color={'primary'} onClick={activateEditeMode}>
               <EditIcon />
             </IconButton>
-            <IconButton color={'primary'} onClick={() => deleteTask(task.id)}>
+            <IconButton color={'primary'} onClick={() => 
+              //deleteTask(task.id)
+              console.log('1')}
+              >
               <DeleteIcon />
             </IconButton>
           </Grid>

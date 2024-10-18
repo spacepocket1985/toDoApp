@@ -10,6 +10,7 @@ import { Spinner } from '../components/spinner/Spinner';
 import { Snack } from '../components/snack/Snack';
 
 import { validationSchemaSignIn } from '../utils/validationSchema';
+import { setToken } from '../utils/localStorageActions';
 
 type SignInInputsType = {
   email: string;
@@ -42,7 +43,7 @@ const SignIn: React.FC = () => {
       }),
     });
     if (token) {
-      //  updateToken(token.token);
+      setToken(token.token);
       navigate(RoutePaths.MainPage);
     }
   };
@@ -79,7 +80,7 @@ const SignIn: React.FC = () => {
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-      <Button type="submit" variant="contained" disabled>
+      <Button type="submit" variant="contained" >
         Submit
       </Button>
       <Typography sx={{ textAlign: 'center' }}>
@@ -102,3 +103,5 @@ const SignIn: React.FC = () => {
 };
 
 export default SignIn;
+
+
