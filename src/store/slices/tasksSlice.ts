@@ -20,7 +20,7 @@ export const initialState: TasksState = {
 };
 
 const tasksSlice = createSlice({
-  name: 'tasksData',
+  name: 'tasks',
   initialState,
   reducers: {
     removeTask: (state, action: PayloadAction<string>) => {
