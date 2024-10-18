@@ -11,7 +11,7 @@ type TasksState = {
   tasks: TaskType[];
 };
 
-const initialState: TasksState = {
+export const initialState: TasksState = {
   tasks: [
     { id: v1(), title: 'Walking the dog 🐶', isCompleted: true },
     { id: v1(), title: 'Clean house 🏠', isCompleted: true },

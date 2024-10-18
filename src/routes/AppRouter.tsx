@@ -10,23 +10,23 @@ export const AppRouter = (): JSX.Element => {
 
   return (
     <Suspense fallback={<Spinner />}>
-    <Routes>
-      {authToken ? (
-        [...privateRoutes, ...publicRoutes].map(({ path, Page }) => (
-          <Route key={path} path={path} element={<Page />} />
-        ))
-      ) : (
-        <>
-          {publicRoutes.map(({ path, Page }) => (
+      <Routes>
+        {authToken ? (
+          [...privateRoutes, ...publicRoutes].map(({ path, Page }) => (
             <Route key={path} path={path} element={<Page />} />
-          ))}
-          <Route
-            path={RoutePaths.MainPage}
-            element={<Navigate replace to={RoutePaths.SignInPage} />}
-          />
-        </>
-      )}
-    </Routes>
+          ))
+        ) : (
+          <>
+            {publicRoutes.map(({ path, Page }) => (
+              <Route key={path} path={path} element={<Page />} />
+            ))}
+            <Route
+              path={RoutePaths.MainPage}
+              element={<Navigate replace to={RoutePaths.SignInPage} />}
+            />
+          </>
+        )}
+      </Routes>
     </Suspense>
   );
 };
