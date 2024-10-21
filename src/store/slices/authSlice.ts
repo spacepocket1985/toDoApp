@@ -28,7 +28,9 @@ export const login = createAsyncThunk<
   });
 
   if (!response.ok) {
-    return rejectWithValue('Error. Login failed.');
+    const errorData = await response.json();
+    const errorMessage = errorData.message || response.statusText;
+    return rejectWithValue(`Error. Login failed. ${errorMessage}`);
   }
 
   const data = await response.json();
@@ -43,7 +45,6 @@ export const registerUser = createAsyncThunk<
   User,
   { rejectValue: string }
 >('auth/register', async (user, { rejectWithValue }) => {
-  console.log(user);
   const response = await fetch(_RegEndpoint, {
     method: 'POST',
     headers: {
@@ -53,10 +54,26 @@ export const registerUser = createAsyncThunk<
   });
 
   if (!response.ok) {
-    return rejectWithValue('Error. Registration failed.');
+    const errorData = await response.json();
+
+    if (errorData.errors && Array.isArray(errorData.errors)) {
+      const errorMessages = errorData.errors
+        .map((err: { msg: unknown }) => err.msg)
+        .join(', ');
+
+      return rejectWithValue(
+        `Error. Registration failed. ${errorMessages}. Code status - ${response.status}`
+      );
+    } else {
+      const errorMessage = errorData.message || response.statusText;
+
+      return rejectWithValue(
+        `Error. Registration failed. ${errorMessage}. Code status - ${response.status}`
+      );
+    }
   }
   const data = await response.json();
-  console.log('data', data);
+
   return data;
 });
 
@@ -66,6 +83,9 @@ const authSlice = createSlice({
   reducers: {
     removeAuthToken: (state) => {
       state.token = null;
+    },
+    clearError: (state) => {
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -96,6 +116,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { removeAuthToken } = authSlice.actions;
+export const { removeAuthToken, clearError } = authSlice.actions;
 
 export default authSlice.reducer;

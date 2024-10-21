@@ -14,9 +14,15 @@ export const AppRouter = (): JSX.Element => {
     <Suspense fallback={<Spinner />}>
       <Routes>
         {token ? (
-          [...privateRoutes, ...publicRoutes].map(({ path, Page }) => (
-            <Route key={path} path={path} element={<Page />} />
-          ))
+          <>
+            <Route
+              path={RoutePaths.SignInPage}
+              element={<Navigate replace to={RoutePaths.MainPage} />}
+            />
+            {[...privateRoutes, ...publicRoutes].map(({ path, Page }) => (
+              <Route key={path} path={path} element={<Page />} />
+            ))}
+          </>
         ) : (
           <>
             {publicRoutes.map(({ path, Page }) => (

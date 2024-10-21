@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../routes/routePaths';
 import { Spinner } from '../spinner/Spinner';
 import { Snack } from '../snack/Snack';
-import { useAppSelector } from '../../hooks/storeHooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { registerUser } from '../../store/slices/authSlice';
 
 const Gender = ['male', 'female'];
@@ -36,6 +36,7 @@ export const RegistrationForm: React.FC = () => {
   const isError = useAppSelector((state) => state.auth.error);
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const onSubmit: SubmitHandler<FormInputsType> = async (data) => {
     const userData: User = {
@@ -46,8 +47,8 @@ export const RegistrationForm: React.FC = () => {
       age: data.age,
     };
 
-    registerUser(userData);
-    if (!isLoading && !isError) {
+    const userInfo = await dispatch(registerUser(userData));
+    if (userInfo.meta.requestStatus !== 'rejected') {
       navigate(RoutePaths.SignInPage);
       reset();
     }

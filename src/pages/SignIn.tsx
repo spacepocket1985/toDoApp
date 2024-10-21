@@ -1,15 +1,16 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Wrapper } from '../components/wrapper/Wrapper';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RoutePaths } from '../routes/routePaths';
+import { Wrapper } from '../components/wrapper/Wrapper';
 import { Spinner } from '../components/spinner/Spinner';
 import { Snack } from '../components/snack/Snack';
 import { validationSchemaSignIn } from '../utils/validationSchema';
 
 import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
-import { login } from '../store/slices/authSlice';
+import { clearError, login } from '../store/slices/authSlice';
+import { useEffect } from 'react';
 
 type SignInInputsType = {
   email: string;
@@ -30,13 +31,13 @@ const SignIn: React.FC = () => {
   const isError = useAppSelector((state) => state.auth.error);
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<SignInInputsType> = async (data) => {
-    const token = await dispatch(
-      login({ email: data.email, password: data.password })
-    );
-    if (token) navigate(RoutePaths.MainPage);
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  const onSubmit: SubmitHandler<SignInInputsType> = (data) => {
+    dispatch(login({ email: data.email, password: data.password }));
   };
 
   const spinner = isLoading ? <Spinner /> : null;
