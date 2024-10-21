@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 import { _ToDoEndpoint, TodoItem } from '../../service/toDoApi';
 import { isToken } from '../../utils/localStorageActions';
+import { AppRootState } from '../store';
 
 type TasksState = {
   tasks: TodoItem[];
@@ -27,7 +28,7 @@ export const fetchTodos = createAsyncThunk<
     },
   });
   if (!response.ok) {
-    return rejectWithValue('Server Error');
+    return rejectWithValue('Error loading task list.');
   }
   const tasks: TodoItem[] = await response.json();
   return tasks;
@@ -49,7 +50,26 @@ export const addTask = createAsyncThunk<
     }),
   });
   if (!response.ok) {
-    return rejectWithValue('Cant add new task');
+    return rejectWithValue('Error creating task.');
+  }
+  const task: TodoItem = await response.json();
+  return task;
+});
+
+export const removeTask = createAsyncThunk<
+  TodoItem,
+  number,
+  { rejectValue: string }
+>('tasks/removeTask', async (id, { rejectWithValue }) => {
+  const response = await fetch(`${_ToDoEndpoint}/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${isToken()}`,
+    },
+  });
+  if (!response.ok) {
+    return rejectWithValue('Error when deleting a task.');
   }
   const task: TodoItem = await response.json();
   return task;
@@ -58,9 +78,11 @@ export const addTask = createAsyncThunk<
 export const changeTaskStatus = createAsyncThunk<
   TodoItem,
   number,
-  { rejectValue: string; state: { todo: TasksState } }
+  { rejectValue: string; state: AppRootState }
 >('tasks/changeTaskStatus', async (id, { rejectWithValue, getState }) => {
-  const taskForUpdate = getState().todo.tasks.find((task) => task.id === id);
+  const taskForUpdate = getState().toDoList.tasks.find(
+    (task) => task.id === id
+  );
   if (taskForUpdate) {
     const response = await fetch(`${_ToDoEndpoint}/${id}/isCompleted`, {
       method: 'PATCH',
@@ -70,47 +92,50 @@ export const changeTaskStatus = createAsyncThunk<
       },
     });
     if (!response.ok) {
-      return rejectWithValue('Cant change task status');
+      return rejectWithValue('Error when changing task status.');
     }
-    const task: TodoItem = await response.json();
-    return task;
+    const task: TodoItem[] = await response.json();
+
+    return task[0];
   }
-  return rejectWithValue('No such task');
+  return rejectWithValue('Update task not found.');
 });
+
+export const updateTaskTitle = createAsyncThunk<
+  TodoItem,
+  { id: number; taskTitle: string },
+  { rejectValue: string; state: AppRootState }
+>(
+  'tasks/updateTaskTitle',
+  async ({ id, taskTitle }, { rejectWithValue, getState }) => {
+    const taskForUpdate = getState().toDoList.tasks.find(
+      (task) => task.id === id
+    );
+    if (taskForUpdate) {
+      const response = await fetch(`${_ToDoEndpoint}/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${isToken()}`,
+        },
+        body: JSON.stringify({
+          title: taskTitle,
+        }),
+      });
+      if (!response.ok) {
+        return rejectWithValue('Error when changing task title.');
+      }
+      const task: TodoItem = await response.json();
+      return task;
+    }
+    return rejectWithValue('Update task not found');
+  }
+);
 
 const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
-  reducers: {
-    // removeTask: (state, action: PayloadAction<string>) => {
-    //   state.tasks = state.tasks.filter((task) => task.id !== action.payload);
-    // },
-    // addTask: (state, action: PayloadAction<string>) => {
-    //   const newTask: TaskType = {
-    //     id: v1(),
-    //     title: action.payload,
-    //     isCompleted: false,
-    //   };
-    //   state.tasks.unshift(newTask);
-    // },
-    // changeTaskStatus: (state, action: PayloadAction<string>) => {
-    //   const task = state.tasks.find((task) => task.id === action.payload);
-    //   if (task) {
-    //     task.isCompleted = !task.isCompleted;
-    //   }
-    // },
-    // changeTaskTitle: (
-    //   state,
-    //   action: PayloadAction<{ taskId: string; taskTitle: string }>
-    // ) => {
-    //   const task = state.tasks.find(
-    //     (task) => task.id === action.payload.taskId
-    //   );
-    //   if (task) {
-    //     task.title = action.payload.taskTitle;
-    //   }
-    // },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchTodos.pending, (state) => {
@@ -121,6 +146,10 @@ const tasksSlice = createSlice({
         state.tasks = action.payload;
         state.loading = false;
       })
+      .addCase(fetchTodos.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Error with fetching tasks';
+      })
       .addCase(addTask.pending, (state) => {
         state.error = null;
       })
@@ -128,15 +157,23 @@ const tasksSlice = createSlice({
         state.tasks.unshift(action.payload);
       })
       .addCase(changeTaskStatus.fulfilled, (state, action) => {
-      const task = state.tasks.find((task) => task.id === action.payload.id);
-      if (task) {
-        task.isCompleted = !task.isCompleted;
-      }
+        const task = state.tasks.find((task) => task.id === action.payload.id);
+        if (task) {
+          task.isCompleted = !task.isCompleted;
+        }
+      })
+      .addCase(updateTaskTitle.fulfilled, (state, action) => {
+        const task = state.tasks.find((task) => task.id === action.payload.id);
+        if (task) {
+          task.title = action.payload.title;
+        }
+      })
+      .addCase(removeTask.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter(
+          (task) => task.id !== action.payload.id
+        );
       });
   },
 });
-
-// export const { removeTask, addTask, changeTaskStatus, changeTaskTitle } =
-//   tasksSlice.actions;
 
 export default tasksSlice.reducer;

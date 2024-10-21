@@ -1,16 +1,15 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Wrapper } from '../components/wrapper/Wrapper';
-import useHttp from '../hooks/useHttp';
 import { Link, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RoutePaths } from '../routes/routePaths';
-import { _LoginEndpoint } from '../service/toDoApi';
 import { Spinner } from '../components/spinner/Spinner';
 import { Snack } from '../components/snack/Snack';
-
 import { validationSchemaSignIn } from '../utils/validationSchema';
-import { setToken } from '../utils/localStorageActions';
+
+import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
+import { login } from '../store/slices/authSlice';
 
 type SignInInputsType = {
   email: string;
@@ -27,25 +26,17 @@ const SignIn: React.FC = () => {
     mode: 'onChange',
   });
 
+  const isLoading = useAppSelector((state) => state.auth.loading);
+  const isError = useAppSelector((state) => state.auth.error);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { fetchData, isLoading, isError } = useHttp();
-
   const onSubmit: SubmitHandler<SignInInputsType> = async (data) => {
-    const token = await fetchData<{ token: string }>(_LoginEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: data.email,
-        password: data.password,
-      }),
-    });
-    if (token) {
-      setToken(token.token);
-      navigate(RoutePaths.MainPage);
-    }
+    const token = await dispatch(
+      login({ email: data.email, password: data.password })
+    );
+    if (token) navigate(RoutePaths.MainPage);
   };
 
   const spinner = isLoading ? <Spinner /> : null;
@@ -80,7 +71,7 @@ const SignIn: React.FC = () => {
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-      <Button type="submit" variant="contained" >
+      <Button type="submit" variant="contained">
         Submit
       </Button>
       <Typography sx={{ textAlign: 'center' }}>
@@ -103,5 +94,3 @@ const SignIn: React.FC = () => {
 };
 
 export default SignIn;
-
-

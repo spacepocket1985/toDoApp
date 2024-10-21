@@ -9,20 +9,28 @@ import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 
 import { RoutePaths } from '../../routes/routePaths';
+import { removeToken } from '../../utils/localStorageActions';
+import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
+import { removeAuthToken } from '../../store/slices/authSlice';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const authToken = false;
+  const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.auth.token);
 
   const renderAuthButton = () => (
     <IconButton
       size="small"
       color="inherit"
       onClick={() => {
-        if (!authToken) navigate(RoutePaths.SignInPage);
+        if (!token) navigate(RoutePaths.SignInPage);
+        else {
+          removeToken();
+          dispatch(removeAuthToken());
+        }
       }}
     >
-      {!authToken ? (
+      {!token ? (
         <>
           <LoginIcon sx={{ mr: 1 }} />
           {'sign in'}

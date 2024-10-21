@@ -1,0 +1,101 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { setToken } from '../../utils/localStorageActions';
+import { _LoginEndpoint, _RegEndpoint, User } from '../../service/toDoApi';
+
+type AuthState = {
+  loading: boolean;
+  error: null | string;
+  token: string | null;
+};
+
+const initialState: AuthState = {
+  loading: false,
+  error: null,
+  token: null,
+};
+
+export const login = createAsyncThunk<
+  string,
+  { email: string; password: string },
+  { rejectValue: string }
+>('auth/login', async ({ email, password }, { rejectWithValue }) => {
+  const response = await fetch(_LoginEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    return rejectWithValue('Error. Login failed.');
+  }
+
+  const data = await response.json();
+
+  setToken(data.token);
+
+  return data.token as string;
+});
+
+export const registerUser = createAsyncThunk<
+  string,
+  User,
+  { rejectValue: string }
+>('auth/register', async (user, { rejectWithValue }) => {
+  console.log(user);
+  const response = await fetch(_RegEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  });
+
+  if (!response.ok) {
+    return rejectWithValue('Error. Registration failed.');
+  }
+  const data = await response.json();
+  console.log('data', data);
+  return data;
+});
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    removeAuthToken: (state) => {
+      state.token = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unknown error';
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unknown error';
+      });
+  },
+});
+
+export const { removeAuthToken } = authSlice.actions;
+
+export default authSlice.reducer;

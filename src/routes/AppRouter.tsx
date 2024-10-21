@@ -5,13 +5,15 @@ import { RoutePaths } from './routePaths';
 import { Suspense } from 'react';
 import { Spinner } from '../components/spinner/Spinner';
 
+import { useAppSelector } from '../hooks/storeHooks';
+
 export const AppRouter = (): JSX.Element => {
-  const authToken = true;
+  const token = useAppSelector((state) => state.auth.token);
 
   return (
     <Suspense fallback={<Spinner />}>
       <Routes>
-        {authToken ? (
+        {token ? (
           [...privateRoutes, ...publicRoutes].map(({ path, Page }) => (
             <Route key={path} path={path} element={<Page />} />
           ))

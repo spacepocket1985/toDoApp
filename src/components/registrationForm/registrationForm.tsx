@@ -2,12 +2,13 @@ import { Box, TextField, Button } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchemaSignUp } from '../../utils/validationSchema';
-import { _RegEndpoint, User } from '../../service/toDoApi';
-import useHttp from '../../hooks/useHttp';
+import { User } from '../../service/toDoApi';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../routes/routePaths';
 import { Spinner } from '../spinner/Spinner';
 import { Snack } from '../snack/Snack';
+import { useAppSelector } from '../../hooks/storeHooks';
+import { registerUser } from '../../store/slices/authSlice';
 
 const Gender = ['male', 'female'];
 
@@ -31,7 +32,9 @@ export const RegistrationForm: React.FC = () => {
     mode: 'onChange',
   });
 
-  const { fetchData, isLoading, isError } = useHttp();
+  const isLoading = useAppSelector((state) => state.auth.loading);
+  const isError = useAppSelector((state) => state.auth.error);
+
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormInputsType> = async (data) => {
@@ -43,15 +46,11 @@ export const RegistrationForm: React.FC = () => {
       age: data.age,
     };
 
-    const registerUser = await fetchData<string>(_RegEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-    if (registerUser) navigate(RoutePaths.SignInPage);
-    reset();
+    registerUser(userData);
+    if (!isLoading && !isError) {
+      navigate(RoutePaths.SignInPage);
+      reset();
+    }
   };
 
   const spinner = isLoading ? <Spinner /> : null;
@@ -144,7 +143,7 @@ export const RegistrationForm: React.FC = () => {
         size="small"
       />
 
-      <Button type="submit" variant="contained" disabled>
+      <Button type="submit" variant="contained">
         Submit
       </Button>
     </Box>
