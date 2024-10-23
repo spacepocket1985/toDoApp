@@ -21,7 +21,7 @@ const SignIn: React.FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<SignInInputsType>({
     resolver: yupResolver(validationSchemaSignIn),
     mode: 'onChange',
@@ -72,7 +72,7 @@ const SignIn: React.FC = () => {
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-      <Button type="submit" variant="contained">
+      <Button type="submit" variant="contained" disabled={!isValid}>
         Submit
       </Button>
       <Typography sx={{ textAlign: 'center' }}>

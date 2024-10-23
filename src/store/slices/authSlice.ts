@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { setToken } from '../../utils/localStorageActions';
+import { isToken, setToken } from '../../utils/localStorageActions';
 import { _LoginEndpoint, _RegEndpoint, User } from '../../service/toDoApi';
 
 type AuthState = {
@@ -11,7 +11,7 @@ type AuthState = {
 const initialState: AuthState = {
   loading: false,
   error: null,
-  token: null,
+  token: isToken(),
 };
 
 export const login = createAsyncThunk<
