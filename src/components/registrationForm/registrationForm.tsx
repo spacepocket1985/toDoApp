@@ -8,8 +8,7 @@ import { RoutePaths } from '../../routes/routePaths';
 import { Spinner } from '../spinner/Spinner';
 import { Snack } from '../snack/Snack';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
-import { registerUser, removeAuthToken } from '../../store/slices/authSlice';
-import { removeToken } from '../../utils/localStorageActions';
+import { registerUser } from '../../store/slices/authSlice';
 
 const Gender = ['male', 'female'];
 
@@ -47,10 +46,8 @@ export const RegistrationForm: React.FC = () => {
       age: data.age,
     };
 
-    const userInfo = await dispatch(registerUser(userData));
-    if (userInfo.meta.requestStatus !== 'rejected') {
-      removeToken();
-      dispatch(removeAuthToken());
+    const registrationResult = await dispatch(registerUser(userData));
+    if (registrationResult.meta.requestStatus === 'fulfilled') {
       navigate(RoutePaths.SignInPage);
     }
   };

@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RoutePaths } from '../routes/routePaths';
 import { Wrapper } from '../components/wrapper/Wrapper';
@@ -31,13 +31,17 @@ const SignIn: React.FC = () => {
   const isError = useAppSelector((state) => state.auth.error);
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  const onSubmit: SubmitHandler<SignInInputsType> = (data) => {
-    dispatch(login({ email: data.email, password: data.password }));
+  const onSubmit: SubmitHandler<SignInInputsType> = async(data) => {
+    const loginResult = await dispatch(login({ email: data.email, password: data.password }));
+    if (loginResult.meta.requestStatus === 'fulfilled') {
+      navigate(RoutePaths.MainPage);
+    }
   };
 
   const spinner = isLoading ? <Spinner /> : null;

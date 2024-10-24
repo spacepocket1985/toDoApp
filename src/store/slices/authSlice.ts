@@ -1,17 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { isToken, setToken } from '../../utils/localStorageActions';
+import { removeToken, setToken } from '../../utils/localStorageActions';
 import { _LoginEndpoint, _RegEndpoint, User } from '../../service/toDoApi';
 
 type AuthState = {
   loading: boolean;
   error: null | string;
-  token: string | null;
 };
 
 const initialState: AuthState = {
   loading: false,
   error: null,
-  token: isToken(),
 };
 
 export const login = createAsyncThunk<
@@ -73,7 +71,7 @@ export const registerUser = createAsyncThunk<
     }
   }
   const data = await response.json();
-
+  removeToken();
   return data;
 });
 
@@ -81,9 +79,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    removeAuthToken: (state) => {
-      state.token = null;
-    },
     clearError: (state) => {
       state.error = null;
     },
@@ -94,9 +89,8 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action) => {
+      .addCase(login.fulfilled, (state) => {
         state.loading = false;
-        state.token = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -116,6 +110,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { removeAuthToken, clearError } = authSlice.actions;
+export const { clearError } = authSlice.actions;
 
 export default authSlice.reducer;

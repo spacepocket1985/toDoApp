@@ -1,40 +1,19 @@
-import { Route, Routes, Navigate } from 'react-router-dom';
-import { privateRoutes, publicRoutes } from './appRoutes';
-
+import { Route, Routes } from 'react-router-dom';
+import { publicRoutes } from './appRoutes';
+import PrivateRoute from '../components/hoc/PrivateRoute';
 import { RoutePaths } from './routePaths';
-import { Suspense } from 'react';
-import { Spinner } from '../components/spinner/Spinner';
-
-import { useAppSelector } from '../hooks/storeHooks';
+import Main from '../pages/Main';
 
 export const AppRouter = (): JSX.Element => {
-  const token = useAppSelector((state) => state.auth.token);
-
   return (
-    <Suspense fallback={<Spinner />}>
-      <Routes>
-        {token ? (
-          <>
-            <Route
-              path={RoutePaths.SignInPage}
-              element={<Navigate replace to={RoutePaths.MainPage} />}
-            />
-            {[...privateRoutes, ...publicRoutes].map(({ path, Page }) => (
-              <Route key={path} path={path} element={<Page />} />
-            ))}
-          </>
-        ) : (
-          <>
-            {publicRoutes.map(({ path, Page }) => (
-              <Route key={path} path={path} element={<Page />} />
-            ))}
-            <Route
-              path={RoutePaths.MainPage}
-              element={<Navigate replace to={RoutePaths.SignInPage} />}
-            />
-          </>
-        )}
-      </Routes>
-    </Suspense>
+    <Routes>
+      <Route
+        path={RoutePaths.MainPage}
+        element={<PrivateRoute element={Main} />}
+      />
+      {publicRoutes.map(({ path, Page }) => (
+        <Route key={path} path={path} element={<Page />} />
+      ))}
+    </Routes>
   );
 };
