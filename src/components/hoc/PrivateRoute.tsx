@@ -1,20 +1,18 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { RoutePaths } from '../../routes/routePaths';
-import { useAuth } from '../../context/AuthContext';
+import React from 'react';  
+import { Navigate } from 'react-router-dom';  
+import { RoutePaths } from '../../routes/routePaths';  
+import { isToken } from '../../utils/localStorageActions';  
 
-type PrivateRouteProps = {
-  element: React.ReactNode;
-};
+type PrivateRouteProps = {  
+  element: React.ComponentType;  
+};  
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
-  const { authToken } = useAuth();
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ element: Element }) => {  
+  if (!isToken()) {  
+    return <Navigate to={RoutePaths.SignInPage} replace />;  
+  }  
 
-  if (!authToken) {
-    return <Navigate to={RoutePaths.SignInPage} replace />;
-  }
-
-  return <>{element}</>;
-};
+  return <Element />;  
+};  
 
 export default PrivateRoute;

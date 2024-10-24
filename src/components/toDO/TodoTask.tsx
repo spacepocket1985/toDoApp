@@ -3,24 +3,22 @@ import { IconButton, Typography, Button, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ChangeEvent, useState } from 'react';
+
+import { TodoItem } from '../../service/toDoApi';
 import { useAppDispatch } from '../../hooks/storeHooks';
 import {
-  changeTaskStatusAC,
-  changeTaskTitleAC,
-  removeTaskAC,
-} from '../../store/tasksReducer';
-
-export type TaskType = {
-  id: string;
-  title: string;
-  isCompleted: boolean;
-};
+  changeTaskStatus,
+  removeTask,
+  updateTaskTitle,
+} from '../../store/slices/tasksSlice';
 
 export const TodoTask: React.FC<{
-  task: TaskType;
+  task: TodoItem;
 }> = ({ task }) => {
   const [editMode, setEditMode] = useState(false);
   const [newTitle, setNewTitle] = useState(task.title);
+
+  const dispatch = useAppDispatch();
 
   const activateEditeMode = () => {
     setEditMode(true);
@@ -31,18 +29,16 @@ export const TodoTask: React.FC<{
     setNewTitle(e.currentTarget.value.trim());
   };
 
-  const dispatch = useAppDispatch();
-
-  const updateTaskTitle = (taskId: string, newTitle: string) => {
-    dispatch(changeTaskTitleAC(taskId, newTitle));
+  const editTaskTitle = (id: number, taskTitle: string) => {
+    dispatch(updateTaskTitle({ id, taskTitle }));
   };
 
-  const changeTaskStatus = (taskId: string) => {
-    dispatch(changeTaskStatusAC(taskId));
+  const updateTaskStatus = (id: number) => {
+    dispatch(changeTaskStatus(id));
   };
 
-  const deleteTask = (taskId: string) => {
-    dispatch(removeTaskAC(taskId));
+  const deleteTask = (id: number) => {
+    dispatch(removeTask(id));
   };
 
   return (
@@ -67,7 +63,7 @@ export const TodoTask: React.FC<{
             variant="contained"
             onClick={() => {
               setEditMode(false);
-              updateTaskTitle(task.id, newTitle);
+              editTaskTitle(task.id, newTitle);
             }}
             disabled={!newTitle.length}
           >
@@ -85,7 +81,7 @@ export const TodoTask: React.FC<{
               cursor: 'pointer',
             }}
             onClick={() => {
-              changeTaskStatus(task.id);
+              updateTaskStatus(task.id);
             }}
           >
             {newTitle}

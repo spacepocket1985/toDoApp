@@ -1,48 +1,45 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Wrapper } from '../components/wrapper/Wrapper';
-import useHttp from '../hooks/useHttp';
 import { Link, useNavigate } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { RoutePaths } from '../routes/routePaths';
-import { _LoginEndpoint } from '../service/toDoApi';
+import { Wrapper } from '../components/wrapper/Wrapper';
 import { Spinner } from '../components/spinner/Spinner';
 import { Snack } from '../components/snack/Snack';
-
 import { validationSchemaSignIn } from '../utils/validationSchema';
+
+import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
+import { clearError, login } from '../store/slices/authSlice';
+import { useEffect } from 'react';
 
 type SignInInputsType = {
   email: string;
   password: string;
 };
 
-export const SignIn: React.FC = () => {
+const SignIn: React.FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<SignInInputsType>({
     resolver: yupResolver(validationSchemaSignIn),
     mode: 'onChange',
   });
 
+  const isLoading = useAppSelector((state) => state.auth.loading);
+  const isError = useAppSelector((state) => state.auth.error);
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { fetchData, isLoading, isError } = useHttp();
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
-  const onSubmit: SubmitHandler<SignInInputsType> = async (data) => {
-    const token = await fetchData<{ token: string }>(_LoginEndpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: data.email,
-        password: data.password,
-      }),
-    });
-    if (token) {
-      //  updateToken(token.token);
+  const onSubmit: SubmitHandler<SignInInputsType> = async(data) => {
+    const loginResult = await dispatch(login({ email: data.email, password: data.password }));
+    if (loginResult.meta.requestStatus === 'fulfilled') {
       navigate(RoutePaths.MainPage);
     }
   };
@@ -79,7 +76,7 @@ export const SignIn: React.FC = () => {
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-      <Button type="submit" variant="contained" disabled>
+      <Button type="submit" variant="contained" disabled={!isValid}>
         Submit
       </Button>
       <Typography sx={{ textAlign: 'center' }}>
@@ -100,3 +97,5 @@ export const SignIn: React.FC = () => {
     </Wrapper>
   );
 };
+
+export default SignIn;

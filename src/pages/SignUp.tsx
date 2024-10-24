@@ -3,8 +3,15 @@ import { Wrapper } from '../components/wrapper/Wrapper';
 import { Link } from 'react-router-dom';
 import { RoutePaths } from '../routes/routePaths';
 import { RegistrationForm } from '../components/registrationForm/registrationForm';
+import { useEffect } from 'react';
+import { clearError } from '../store/slices/authSlice';
+import { useAppDispatch } from '../hooks/storeHooks';
 
-export const SignUp: React.FC = () => {
+const SignUp: React.FC = () => {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
   return (
     <Wrapper title={'Sign up please'}>
       <RegistrationForm />
@@ -14,3 +21,5 @@ export const SignUp: React.FC = () => {
     </Wrapper>
   );
 };
+
+export default SignUp;
