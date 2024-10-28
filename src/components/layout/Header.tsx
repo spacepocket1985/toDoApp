@@ -1,8 +1,6 @@
-import { IconButton } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { Button } from '@mui/material';
+
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid2';
@@ -12,29 +10,6 @@ import { RoutePaths } from '../../routes/routePaths';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
-  const authToken = false;
-
-  const renderAuthButton = () => (
-    <IconButton
-      size="small"
-      color="inherit"
-      onClick={() => {
-        if (!authToken) navigate(RoutePaths.SignInPage);
-      }}
-    >
-      {!authToken ? (
-        <>
-          <LoginIcon sx={{ mr: 1 }} />
-          {'sign in'}
-        </>
-      ) : (
-        <>
-          <LogoutIcon sx={{ mr: 1 }} />
-          {'sign out'}
-        </>
-      )}
-    </IconButton>
-  );
 
   return (
     <Box sx={{ flexGrow: 1, mb: 1 }}>
@@ -42,36 +17,28 @@ export const Header: React.FC = () => {
         <Grid
           container
           sx={{
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             alignItems: 'center',
             padding: '5px',
           }}
         >
-          <IconButton
-            size={'small'}
-            color="inherit"
+          <Button
+            variant="contained"
             onClick={() => {
-              navigate(RoutePaths.MainPage);
+              navigate(RoutePaths.Pagination);
             }}
           >
-            <HomeIcon color="inherit" />
-            ToDo app
-          </IconButton>
-          <Grid>
-            {renderAuthButton()}
-            <IconButton
-              size="small"
-              color="inherit"
-              onClick={() => {
-                navigate(RoutePaths.SignUpPage);
-              }}
-            >
-              <>
-                <PersonAddIcon sx={{ mr: 1 }} />
-                {'sign Up'}
-              </>
-            </IconButton>
-          </Grid>
+            Pagination
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              navigate(RoutePaths.InfiniteScroll);
+            }}
+          >
+            InfiniteScroll
+          </Button>
+          <Grid></Grid>
         </Grid>
       </AppBar>
     </Box>

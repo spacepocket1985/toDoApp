@@ -1,22 +1,21 @@
-import { SignIn } from '../pages/SignIn';
-import { SignUp } from '../pages/SignUp';
+
+
+import { InfiniteScroll } from '../pages/InfiniteScroll';
 import { Main } from '../pages/Main';
+import { Pagination } from '../pages/Pagination';
 import { RoutePaths } from './routePaths';
 
-export const privateRoutes = [
+export const publicRoutes = [
   {
     path: RoutePaths.MainPage,
     Page: Main,
   },
-];
-
-export const publicRoutes = [
   {
-    path: RoutePaths.SignInPage,
-    Page: SignIn,
+    path: RoutePaths.Pagination,
+    Page: Pagination ,
   },
   {
-    path: RoutePaths.SignUpPage,
-    Page: SignUp,
+    path: RoutePaths.InfiniteScroll,
+    Page: InfiniteScroll,
   },
 ];

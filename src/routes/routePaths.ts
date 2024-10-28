@@ -1,6 +1,6 @@
 export enum RoutePaths {
   MainPage = '/',
-  SignInPage = '/sign-in',
-  SignUpPage = '/sign-up',
+  Pagination = '/pagination',
+  InfiniteScroll = '/infiniteScroll',
   PAGE404 = '*',
 }

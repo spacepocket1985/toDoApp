@@ -1,16 +1,14 @@
-import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 export const Wrapper: React.FC<{
   children: React.ReactNode;
-  title: string;
-}> = ({ children, title }) => {
+}> = ({ children }) => {
   return (
     <Grid
       container
       direction={'column'}
       spacing={2}
-      size={3}
+      size={2}
       sx={{
         m: 'auto',
         justifyContent: 'center',
@@ -19,20 +17,6 @@ export const Wrapper: React.FC<{
         padding: 1,
       }}
     >
-      <Typography
-        variant="h4"
-        component="h4"
-        sx={{
-          padding: 1,
-          textAlign: 'center',
-          bgcolor: '#1976d2',
-          borderRadius: 2,
-          color: '#fff',
-          width: '20rem',
-        }}
-      >
-        {title}
-      </Typography>
       {children}
     </Grid>
   );

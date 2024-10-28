@@ -1,35 +1,34 @@
-import Stack from '@mui/joy/Stack';
+import Stack from '@mui/joy/Stack';  
+import Snackbar from '@mui/joy/Snackbar';  
+import React from 'react';  
 
-import Snackbar from '@mui/joy/Snackbar';
-import React from 'react';
+type SnackColorType = 'primary' | 'neutral' | 'danger' | 'success' | 'warning';  
+type SnackVariantType = 'outlined' | 'plain' | 'soft' | 'solid';  
 
-type SnackColorType = 'primary' | 'neutral' | 'danger' | 'success' | 'warning';
-type SnackVariantType = 'outlined' | 'plain' | 'soft' | 'solid';
-
-export const Snack: React.FC<{
-  color: SnackColorType;
-  variant: SnackVariantType;
-  children: React.ReactNode;
-}> = ({ color, variant, children }) => {
-  const [open, setOpen] = React.useState(true);
-
-  return (
-    <Stack spacing={2} sx={{ alignItems: 'center' }}>
-      <Snackbar
-        autoHideDuration={4000}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        open={open}
-        variant={variant}
-        color={color}
-        onClose={(_, reason) => {
-          if (reason === 'clickaway') {
-            return;
-          }
-          setOpen(false);
-        }}
-      >
-        {children}
-      </Snackbar>
-    </Stack>
-  );
-};
+export const Snack: React.FC<{  
+  color: SnackColorType;  
+  variant: SnackVariantType;  
+  open: boolean; 
+  onClose: () => void; 
+  children: React.ReactNode;  
+}> = ({ color, variant, open, onClose, children }) => {  
+  return (  
+    <Stack spacing={2} sx={{ alignItems: 'center' }}>  
+      <Snackbar  
+        autoHideDuration={2000}  
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}  
+        open={open}  
+        variant={variant}  
+        color={color}  
+        onClose={(_, reason) => {  
+          if (reason === 'clickaway') {  
+            return;  
+          }  
+          onClose(); 
+        }}  
+      >  
+        {children}  
+      </Snackbar>  
+    </Stack>  
+  );  
+};  
